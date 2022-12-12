@@ -51,6 +51,7 @@ class Login(tk.Tk):
         s.configure('TButton', relief='flat' ,font = TITLE, foreground="white", background=BUTTONCOL )
         s.map("TButton", foreground=[('pressed', 'white'), ('active', 'white')], background=[('pressed', '!disabled',BUTTONPRESS ), ('active', BUTTONHOV)])
         s.configure('TLabel', relief='flat' , background=BACKGROUND )
+        s.configure('grey.TLabel', background=BACKGROUND, foreground=BUTTONPRESS)
 
         # Widgets del login
         ttk.Label(logframe, text='INGRESA A TU CUENTA',font = TITLE).grid(row=0,column=0,columnspan=2 ,sticky='w',pady=20)
@@ -72,9 +73,13 @@ class Login(tk.Tk):
         # para ejecutar la funcion de login al presionar enter en los cuadros de email o password
         pass_entry.bind('<Return>',lambda e: self.login()) 
         name_entry.bind('<Return>',lambda e: self.login()) 
-
+        
+        olvido_passw=ttk.Label(logframe, text='Olvido su Contraseña?',font = SMALLFONT,style='grey.TLabel', padding=5)
+        olvido_passw.grid(row=5,column=0,sticky='w',padx=15)
+        olvido_passw.bind('<Button-1>',lambda e: messagebox.showinfo(message="Funcionalidad disponible en Breve", title="En construccion"))
         btn_login=ttk.Button(logframe, text="    INGRESAR    " ,padding=35, command=self.login ).grid(row=2,column=1, rowspan=3,sticky='w' )
         
+
         sep=ttk.Separator(logframe, orient='vertical')
         sep.grid(row=1,column=3,rowspan=5, sticky='ns')
         ttk.Label(logframe, text='CREAR NUEVA CUENTA',font = TITLE).grid(row=0,column=4,columnspan=2 )
@@ -91,15 +96,16 @@ class Login(tk.Tk):
         #cartframe['borderwidth'] = 5
         #cartframe['relief'] = 'groove'
 
-        img1 = tk.PhotoImage(file="img\\image1.png",height=350)
+        HEIGTH=342
+        img1 = tk.PhotoImage(file="img\\image1.png",height=HEIGTH)
         tk.Label(cartframe,image=img1).grid(row=0,column=0,padx=10)
-        img2 = tk.PhotoImage(file="img\\image2.png",height=350)
+        img2 = tk.PhotoImage(file="img\\image2.png",height=HEIGTH)
         tk.Label(cartframe,image=img2).grid(row=0,column=1,padx=10)
-        img3 = tk.PhotoImage(file="img\\image3.png",height=350)
+        img3 = tk.PhotoImage(file="img\\image3.png",height=HEIGTH)
         tk.Label(cartframe,image=img3).grid(row=0,column=2,padx=10)
-        img4 = tk.PhotoImage(file="img\\image4.png",height=350)
+        img4 = tk.PhotoImage(file="img\\image4.png",height=HEIGTH)
         tk.Label(cartframe,image=img4).grid(row=0,column=3,padx=10)
-        img5 = tk.PhotoImage(file="img\\image5.png",height=350)
+        img5 = tk.PhotoImage(file="img\\image5.png",height=HEIGTH)
         tk.Label(cartframe,image=img5).grid(row=0,column=4,padx=10)	
 
 
@@ -133,14 +139,10 @@ class Login(tk.Tk):
             else:
                 self.user_inco.grid(row=1,column=0,sticky='w',padx=15)
         else:
-            messagebox.showinfo(message="Debe ingresar un usuario y una contraseña", title="Error")
+            messagebox.showwarning(message="Debe ingresar un usuario y una contraseña", title="Error")
         
  
 
         
-
-
-
-
 Login()
 

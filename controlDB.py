@@ -5,11 +5,11 @@ class Conexion_cinemark():
     def __init__(self):#bd es el nombre de la base de datos
         self.conexion = sql.connect('cinemark.db')
         self.cursor = self.conexion.cursor()
-
+    
     def consultar(self, consulta):
        data= self.cursor.execute(consulta)
        self.commit()
-       return data
+       return data  
     
     def commit(self):
         self.conexion.commit()
@@ -56,6 +56,20 @@ class C_Usuarios():
         conexion.close()
 
 
-#user = C_Usuarios()
-#user.insertar('facundo','javier','loe@gmail.com','contraseñasegura',0,4832554)
-#print(user.validar('loe@gmail.com','contraseñasegura'))
+class C_Reservas():
+
+    def __init__(self):
+        conexion = Conexion_cinemark()
+        conexion.consultar('CREATE TABLE IF NOT EXISTS "reservas" ( "idreservas"	INTEGER NOT NULL UNIQUE, "iduser"	INTEGER NOT NULL, 		'\
+                          +'"idfuncion" INTEGER NOT NULL, "butacas"	INTEGER NOT NULL, 	"estado"	VARCHAR(10) NOT NULL, FOREIGN KEY("iduser") '\
+	                      +'REFERENCES "usuarios"("id"), PRIMARY KEY("idreservas" AUTOINCREMENT) );')
+        conexion.close()
+    
+    def insertar(self,iduser, idfuncion, butacas, estado):
+        conexion=Conexion_cinemark()
+        conexion.consultar(f' INSERT INTO reservas (iduser, idfuncion, butacas, estado) VALUES {iduser, idfuncion, butacas, estado}')
+        conexion.close
+
+
+c = C_Reservas()
+c.insertar(1,1,3,'Activa' )

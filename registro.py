@@ -17,6 +17,7 @@ class Registro(tk.Tk):
         self.title('CREAR NUEVA CUENTA')
         self.iconbitmap("img\\favicon.ico")
         utl.centrar_ventana(self,1200,900)
+        self.resizable(False, False)
         # Creo el marco principal
         mainframe=tk.Frame(self,background=BACKGROUND)
         mainframe.columnconfigure(0, weight=1)
