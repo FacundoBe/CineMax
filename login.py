@@ -2,7 +2,7 @@ import tkinter as tk
 from tkinter import ttk
 from tkinter import messagebox
 from settings import *
-from controlDB import C_Usuarios
+from controlDB import C_Usuarios, C_Salas
 import utils.generic as utl
 from admin import Admin
 from cliente import Cliente
@@ -15,7 +15,7 @@ class Login(tk.Tk):
         super().__init__()
         self.geometry('1200x900')
         self.title('LOGIN')
-        self.iconbitmap("img\\favicon.ico")
+        self.iconbitmap(image_path+'/favicon.ico')
         utl.centrar_ventana(self,1200,900)
         # Creo el marco principal
         mainframe=tk.Frame(self,background=BACKGROUND)
@@ -88,25 +88,22 @@ class Login(tk.Tk):
         # Cartelera
         cartframe=tk.Frame(mainframe,bg=BACKGROUND)
         cartframe.grid(row=2,column=0,sticky ="nsew")
-        cartframe.columnconfigure(0,weight=1)
-        cartframe.columnconfigure(1,weight=1)
-        cartframe.columnconfigure(2,weight=1)
-        cartframe.columnconfigure(3,weight=1)
-        cartframe.columnconfigure(4,weight=1)
-        #cartframe['borderwidth'] = 5
-        #cartframe['relief'] = 'groove'
+        for i in range(5) : cartframe.columnconfigure(i,weight=1) #creo 5 columnas iguales
+ 
+       
+        salas=C_Salas() # Leo las peliculas en cartelera
+        peliculas=salas.datos_cartelera()
+        
+        
+        self.img = {}
 
-        HEIGTH=342
-        img1 = tk.PhotoImage(file="img\\image1.png",height=HEIGTH)
-        tk.Label(cartframe,image=img1).grid(row=0,column=0,padx=10)
-        img2 = tk.PhotoImage(file="img\\image2.png",height=HEIGTH)
-        tk.Label(cartframe,image=img2).grid(row=0,column=1,padx=10)
-        img3 = tk.PhotoImage(file="img\\image3.png",height=HEIGTH)
-        tk.Label(cartframe,image=img3).grid(row=0,column=2,padx=10)
-        img4 = tk.PhotoImage(file="img\\image4.png",height=HEIGTH)
-        tk.Label(cartframe,image=img4).grid(row=0,column=3,padx=10)
-        img5 = tk.PhotoImage(file="img\\image5.png",height=HEIGTH)
-        tk.Label(cartframe,image=img5).grid(row=0,column=4,padx=10)	
+        HEIGTH=342 # setea la altura del label (deberia ser igual a la altura de la imagen de la pelicula )
+        for ind,peli in enumerate(peliculas):
+
+            self.img[ind] = tk.PhotoImage(file= image_path +'\\' + peli[2], height=HEIGTH)
+            tk.Label(cartframe,image=self.img[ind]).grid(row=0,column=ind,padx=10)           
+            ttk.Label(cartframe, text=f'{peli[1]}',font = TITLE).grid(row=1,column=ind,pady=5)    
+            ttk.Label(cartframe, text=f'SALA {peli[0]}',font = TITLEBOLD).grid(row=3,column=ind,pady=5)    
 
 
         self.mainloop() 

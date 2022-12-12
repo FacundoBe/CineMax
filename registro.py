@@ -12,9 +12,8 @@ class Registro(tk.Tk):
     
     def __init__(self):
         super().__init__()
-        self.geometry('1200x900')
         self.title('CREAR NUEVA CUENTA')
-        self.iconbitmap("img\\favicon.ico")
+        self.iconbitmap(image_path+'/favicon.ico')
         utl.centrar_ventana(self,1200,900)
         self.resizable(False, False)
         # Creo el marco principal

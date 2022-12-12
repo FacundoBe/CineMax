@@ -76,21 +76,26 @@ class C_Reservas():
 
 class C_Salas():
     def __init__(self):
-        conex = Conexion_Cinemark()
+        conex = Conexion_cinemark()
         conex.consultar('CREATE TABLE IF NOT EXISTS "salas" ("idsalas"	INTEGER NOT NULL UNIQUE,"pelicula" TEXT NOT NULL,"sinopsis"	TEXT,"archivo_imagen" TEXT, "butacasmax"	INTEGER NOT NULL,"horarios"	TEXT NOT NULL,PRIMARY KEY("idsalas"));')
         conex.close()
 
     def crear_sala(self, id:int, pelicula:str,horarios:str, archivo_img:str, butacasmax:int, sinopsis=""):
-        conex = Conexion_Cinemark()
+        conex = Conexion_cinemark()
         conex.consultar(f"INSERT INTO Salas (idsalas, pelicula, sinopsis, archivo_imagen, butacasmax, horarios) VALUES { id, pelicula, sinopsis, archivo_img, butacasmax, horarios}")
         conex.close()
     
     def eliminar_sala(self, id:int):
-        conex = Conexion_Cinemark()
+        conex = Conexion_cinemark()
         conex.consultar(f"DELETE FROM Salas WHERE idsalas = {id}")
         conex.close()
 
-
+    def datos_cartelera(self,): # Devuelve los datos necesarios para armar la cartelera
+        conex = Conexion_cinemark()
+        res=conex.consultar('SELECT idsalas, pelicula, archivo_imagen FROM "salas" ')
+        return res.fetchall()
+        conex.close()
+    
 
 
 
@@ -106,5 +111,6 @@ class C_Funciones():
 
 #c = C_Reservas()
 #c.insertar(1,1,3,'Activa' )
-#sala1= C_Salas()
-#sala1.crear_sala(2, "Black Adam", "20:30, 23:30", "imagen1.png",40, "linda pelicula" )
+sala1= C_Salas()
+print(sala1.datos_cartelera())
+#sala1.crear_sala(2, "Historia de Honor", "19:30, 21:30", "image2.png",45, " muy fea pelicula no ver en familia no vale la pena" )
