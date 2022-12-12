@@ -15,5 +15,7 @@ class Cliente(tk.Tk):
         self.title(f'CLIENTE Id: {self.id}')
         self.iconbitmap("img\\favicon.ico")
         ttk.Label(self, text=f'Bienvenido {self.nombre}', font=MAINBAR).grid(sticky='w')
+        
+        
         self.mainloop()
 

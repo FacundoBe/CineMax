@@ -8,4 +8,6 @@ class Admin(tk.Tk):
         self.geometry('1200x900')
         self.title('ADMINISTRADOR')
         self.iconbitmap("img\\favicon.ico")
+        
+        
         self.mainloop()

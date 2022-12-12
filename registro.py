@@ -5,7 +5,6 @@ from settings import *
 from cliente import Cliente
 from controlDB import C_Usuarios
 import utils.generic as utl
-
 import re
 
 
@@ -42,7 +41,7 @@ class Registro(tk.Tk):
         #logframe['borderwidth'] = 5
         #logframe['relief'] = 'groove'
         
-        #Estilo 
+        # Aplico Estilo general a botones y eiquetas (TButton y TLabel )
         s = ttk.Style(logframe)
         s.theme_use('clam')
         s.configure('TButton', relief='flat' ,font = TITLE, foreground="white", background=BUTTONCOL )
@@ -58,17 +57,17 @@ class Registro(tk.Tk):
         ttk.Label(logframe, text='* Confirmar Contraseña:',font = STDFONT).grid(row=5,column=1,sticky='w',pady=(40,7))
         ttk.Label(logframe, text='Numero de telefono',font = STDFONT).grid(row=7,column=0,sticky='w',pady=(40,7))
         
-        # variable del tkinter para recuperar las entradas 
+        # variable de los entry del tkinter para recuperar las entradas 
         self.nombre = tk.StringVar()
         self.apellido = tk.StringVar()
         self.email = tk.StringVar()
         self.passw1 = tk.StringVar()
         self.passw2 = tk.StringVar()
         self.tel = tk.StringVar()
-
+        
+        # Widgets Entry
         tk.Entry(logframe, textvariable = self.nombre, font=STDFONT,bd=0,width=23).grid(row=2,column=0,sticky='w',ipady=4)
         tk.Entry(logframe, textvariable = self.apellido, font=STDFONT,bd=0,width=23).grid(row=2,column=1,sticky='w',ipady=4)
-        
         tk.Entry(logframe, textvariable = self.email, font=STDFONT,bd=0, width=52).grid(row=4,column=0,columnspan=2,sticky='w',ipady=4)
         tk.Entry(logframe, textvariable = self.passw1, show='*', font=STDFONT,bd=0,width=23).grid(row=6,column=0,sticky='w',ipady=4)
         tk.Entry(logframe, textvariable = self.passw2, show='*', font=STDFONT,bd=0,width=23).grid(row=6,column=1,sticky='w',ipady=4)

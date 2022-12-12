@@ -1,5 +1,6 @@
 import sqlite3 as sql
 
+
 class Conexion_cinemark():
 
     def __init__(self):#bd es el nombre de la base de datos
@@ -56,6 +57,7 @@ class C_Usuarios():
         conexion.close()
 
 
+
 class C_Reservas():
 
     def __init__(self):
@@ -68,8 +70,41 @@ class C_Reservas():
     def insertar(self,iduser, idfuncion, butacas, estado):
         conexion=Conexion_cinemark()
         conexion.consultar(f' INSERT INTO reservas (iduser, idfuncion, butacas, estado) VALUES {iduser, idfuncion, butacas, estado}')
-        conexion.close
+        conexion.close()
 
 
-c = C_Reservas()
-c.insertar(1,1,3,'Activa' )
+
+class C_Salas():
+    def __init__(self):
+        conex = Conexion_Cinemark()
+        conex.consultar('CREATE TABLE IF NOT EXISTS "salas" ("idsalas"	INTEGER NOT NULL UNIQUE,"pelicula" TEXT NOT NULL,"sinopsis"	TEXT,"archivo_imagen" TEXT, "butacasmax"	INTEGER NOT NULL,"horarios"	TEXT NOT NULL,PRIMARY KEY("idsalas"));')
+        conex.close()
+
+    def crear_sala(self, id:int, pelicula:str,horarios:str, archivo_img:str, butacasmax:int, sinopsis=""):
+        conex = Conexion_Cinemark()
+        conex.consultar(f"INSERT INTO Salas (idsalas, pelicula, sinopsis, archivo_imagen, butacasmax, horarios) VALUES { id, pelicula, sinopsis, archivo_img, butacasmax, horarios}")
+        conex.close()
+    
+    def eliminar_sala(self, id:int):
+        conex = Conexion_Cinemark()
+        conex.consultar(f"DELETE FROM Salas WHERE idsalas = {id}")
+        conex.close()
+
+
+
+
+
+
+class C_Funciones():
+    
+    def __init__(self):
+        conexion= Conexion_cinemark()
+        conexion.consultar('CREATE TABLE "funciones" (	"idfuncion"	INTEGER NOT NULL UNIQUE, "idsalas"	INTEGER NOT NULL,'\
+                           +'"dia"	TEXT NOT NULL,	"hora"	TEXT NOT NULL,	"butacaslibres"	INTEGER NOT NULL, PRIMARY KEY("idfuncion" AUTOINCREMENT));')
+        conexion.close()
+
+
+#c = C_Reservas()
+#c.insertar(1,1,3,'Activa' )
+#sala1= C_Salas()
+#sala1.crear_sala(2, "Black Adam", "20:30, 23:30", "imagen1.png",40, "linda pelicula" )
