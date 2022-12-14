@@ -1,5 +1,6 @@
 import sqlite3 as sql
-
+from datetime import datetime, timedelta
+import settings
 
 class Conexion_cinemark():
 
@@ -95,6 +96,18 @@ class C_Salas():
         res=conex.consultar('SELECT idsalas, pelicula, archivo_imagen FROM "salas" ')
         return res.fetchall()
         conex.close()
+
+    def datos_funciones(self): # Devuelve los datos necesarios para armar las funciones
+        conex = Conexion_cinemark()
+        res=conex.consultar('SELECT idsalas, pelicula, horarios, butacasmax FROM "salas" ')
+        return res.fetchall()
+        conex.close()
+    
+    def datos_completos(self,id): # Devuelve todos los datos de la sala
+        conex = Conexion_cinemark()
+        res=conex.consultar(f'SELECT * FROM "salas" WHERE idsalas = {id}')
+        return res.fetchall()
+        conex.close()
     
 
 
@@ -104,13 +117,58 @@ class C_Funciones():
     
     def __init__(self):
         conexion= Conexion_cinemark()
-        conexion.consultar('CREATE TABLE "funciones" (	"idfuncion"	INTEGER NOT NULL UNIQUE, "idsalas"	INTEGER NOT NULL,'\
-                           +'"dia"	TEXT NOT NULL,	"hora"	TEXT NOT NULL,	"butacaslibres"	INTEGER NOT NULL, PRIMARY KEY("idfuncion" AUTOINCREMENT));')
+        conexion.consultar('CREATE TABLE IF NOT EXISTS "funciones" (	"idfuncion"	INTEGER NOT NULL UNIQUE, "idsalas"	INTEGER NOT NULL,'\
+                           +'"horario"	TEXT NOT NULL,	"butacaslibres"	INTEGER NOT NULL,estado TEXT NOT NULL, PRIMARY KEY("idfuncion" AUTOINCREMENT));')
         conexion.close()
 
+    def generar_funciones(self): # Genera las funciones de todas las salas atuales para los proximos 7 dias y la guarda en la base de datos
+        con_salas=C_Salas()
+        salas=con_salas.datos_funciones()
+        salas=[list(x) for x in salas] # pasao cada sala de tupla  a lista
+        for sala in salas: # Convierto los horarios en una lista de listas con formato [[HH, MM], [HH, MM], etc.  ]
+            sala[2]=sala[2].split(',')
+            sala[2]=[x.split(':') for x in sala[2]]
+        ahora= datetime.now()
+        for sala in salas:
+            idsala=sala[0]
+            butacasmax=sala[3]
+            for delta_dia in range(0,7):
+                dia_fun = ahora + timedelta(days=delta_dia) #Voy sumandole un dia mas a la fecha por ciclo
+                for hora,minutos in sala[2]:
+                    horario_funcion=datetime(dia_fun.year, dia_fun.month, dia_fun.day,int(hora),int(minutos))
+                    horario_str= horario_funcion.strftime('%d/%m/%Y %H:%M' )
+                    if self.no_existe(idsala, horario_str):    # Solo inserta la funcion si la misma no existe previamente como activa
+                        self.crear_funcion(idsala,horario_str,butacasmax)
+    
+    def no_existe(self, idsala, horario):
+        conex = Conexion_cinemark()
+        res=conex.consultar(f'SELECT idfuncion FROM "funciones" WHERE horario = "{horario}" AND idsalas = {idsala}  ')
+        val = res.fetchone()
+        return val == None
+        conex.close()
+    
+    def encontrar_id(self, idsala, horario): #duvuelve le id de una funcion segun el horario y la sala correspondientes
+        conex = Conexion_cinemark()
+        res=conex.consultar(f'SELECT idfuncion FROM "funciones" WHERE horario = "{horario}" AND idsalas = {idsala}  ')
+        val = res.fetchone()
+        if val != None:
+            return val[0]
 
-#c = C_Reservas()
-#c.insertar(1,1,3,'Activa' )
-sala1= C_Salas()
-print(sala1.datos_cartelera())
-#sala1.crear_sala(2, "Historia de Honor", "19:30, 21:30", "image2.png",45, " muy fea pelicula no ver en familia no vale la pena" )
+        conex.close()
+    
+    def crear_funcion(self, idsala, horario, butacasmax):
+        conex = Conexion_cinemark()
+        conex.consultar(f'INSERT INTO funciones (idsalas, butacaslibres, horario, estado) VALUES ({idsala}, {butacasmax}, "{horario}", "activa")')
+        conex.close()
+
+    def datos_reserva(self,idsala): # Devuelve todos los datos correspondientes a la funcion de la sala indicada
+        conex = Conexion_cinemark()
+        res=conex.consultar(f'SELECT * FROM "funciones" WHERE idsalas = {idsala} ')
+        return res.fetchall()
+        conex.close()
+
+#c=C_Funciones()
+#c.generar_funciones()
+
+
+

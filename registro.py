@@ -37,8 +37,6 @@ class Registro(tk.Tk):
         logframe.columnconfigure(0,weight=2)
         logframe.columnconfigure(1,weight=2)
         logframe.grid(row=1,column=0,sticky ="nsew",padx=300,pady=25)
-        #logframe['borderwidth'] = 5
-        #logframe['relief'] = 'groove'
         
         # Aplico Estilo general a botones y eiquetas (TButton y TLabel )
         s = ttk.Style(logframe)

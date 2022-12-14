@@ -34,8 +34,8 @@ class Login(tk.Tk):
 
         # Marco del login
         logframe=tk.Frame(mainframe,bg=BACKGROUND)
-        self.logframe=logframe                      #Guardo uan rfeecina al marco de login/registro
-        logframe.columnconfigure(0,weight=2)
+        self.logframe=logframe                      # Guardo una referencia al marco de login/registro Lo uso para modificar los
+        logframe.columnconfigure(0,weight=2)        # labels de contraseña y email erroneos 
         logframe.columnconfigure(1,weight=2)
         logframe.columnconfigure(3,weight=1)
         logframe.columnconfigure(4,weight=2)
