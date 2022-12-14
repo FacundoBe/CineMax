@@ -31,7 +31,10 @@ class Cliente(tk.Tk):
         s.map("TButton", foreground=[('pressed', 'white'), ('active', 'white')], background=[('pressed', BUTTONPRESS ),('disabled','grey' ), ('active', BUTTONHOV)])
         s.configure('TLabel', relief='flat' , background=BACKGROUND )
         s.configure('grey.TButton', relief='flat' ,font = TITLE, foreground=BACKGROUND, background=BUTTONCLEAR )
+        s.configure('cancel.TButton', relief='flat' ,font = TITLE, foreground="white", background=REDBUTTON )
         s.configure('grey.TLabel', background=BACKGROUND, foreground=BUTTONPRESS)
+        s.configure('TRadiobutton', font = TITLE,  background=BACKGROUND )
+        s.configure('TSpinbox', font = TITLE,  arrowsize=14 )
 
         # Faja superior
         faja = tk.Frame(mainframe,bg=DARKCOLOR)
@@ -92,8 +95,6 @@ class Label_con_retorno(tk.Label):
     def reservar_funcion(self,event):
         Hacer_Reserva(self.idsala,self.id_cliente)  # Abre el popup para hacer la reserva
 
-
-
-        
+Cliente(4)
 
 
