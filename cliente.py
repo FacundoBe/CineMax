@@ -33,8 +33,8 @@ class Cliente(tk.Tk):
         s.configure('grey.TButton', relief='flat' ,font = TITLE, foreground=BACKGROUND, background=BUTTONCLEAR )
         s.configure('cancel.TButton', relief='flat' ,font = TITLE, foreground="white", background=REDBUTTON )
         s.configure('grey.TLabel', background=BACKGROUND, foreground=BUTTONPRESS)
-        s.configure('TRadiobutton', font = TITLE,  background=BACKGROUND )
-        s.configure('TSpinbox', font = TITLE,  arrowsize=14 )
+        s.configure('TRadiobutton', font = STDFONT,  background=BACKGROUND )
+        s.configure('TSpinbox', font = TITLE,  arrowsize=12 )
 
         # Faja superior
         faja = tk.Frame(mainframe,bg=DARKCOLOR)
@@ -74,8 +74,8 @@ class Cliente(tk.Tk):
         resframe.grid(row=2,column=0,sticky ="nsew")
         #resframe.configure(borderwidth=5,relief='groove')
         
-        ttk.Label(resframe, text=' GESTIONA TUS RESERVAS',font = TITLEBOLD).grid(row=0,column=0,columnspan=2 ,sticky='w',pady=20,padx=10)
-        ttk.Button(resframe, text="  VER RESERVAS  " , command=self.llama_gestion_reservas , style='flat.TButton',padding=35 ).grid(row=2,column=0)
+        ttk.Label(resframe, text=' GESTIONA TUS RESERVAS',font = TITLEBOLD).grid(row=0,column=0,columnspan=2 ,sticky='w',pady=20,padx=20)
+        ttk.Button(resframe, text="  VER RESERVAS  " , command=self.llama_gestion_reservas , style='flat.TButton',padding=35 ).grid(row=2,column=0,padx=30)
 
 
 

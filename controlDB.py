@@ -171,24 +171,34 @@ class C_Funciones():
         conex = Conexion_cinemark()
         conex.consultar(f'INSERT INTO funciones (idsalas, butacaslibres, dia, hora, estado) VALUES ({idsala}, {butacasmax}, "{dia}", "{hora}", "activa")')
         conex.close()
-
-    #def datos_reserva(self,idsala): # Devuelve todos los datos correspondientes a la funciones de la sala indicada
-    #    conex = Conexion_cinemark()
-   #     res=conex.consultar(f'SELECT * FROM "funciones" WHERE idsalas = {idsala} ')
-   #     return res.fetchall()
-   #     conex.close()
-       
-    def dia_y_hora(self, idsala): #devuelve una lista con los dias y las horas a que funcion de esa pelicula
+      
+    def dia_y_hora(self, idsala): #devuelve una lista con los dias y las horas una pelicula considerando solo funcines activas
         conex = Conexion_cinemark()
-        res=conex.consultar(f'SELECT DISTINCT dia FROM "funciones" WHERE idsalas = {idsala} ORDER BY dia ASC ')
+        res=conex.consultar(f'SELECT DISTINCT dia FROM "funciones" WHERE idsalas = {idsala} AND estado = "activa" ORDER BY dia ASC ')
         dias = res.fetchall()
-        res=conex.consultar(f'SELECT DISTINCT hora FROM "funciones" WHERE idsalas = {idsala} ORDER BY dia ASC ')
+        res=conex.consultar(f'SELECT DISTINCT hora FROM "funciones" WHERE idsalas = {idsala} AND estado = "activa" ORDER BY dia ASC ')
         horas = res.fetchall()
         return dias,horas
         conex.close()
 
+
+class C_Descuentos():
+    
+    def __init__(self):
+        conexion= Conexion_cinemark()
+        conexion.consultar('CREATE TABLE IF NOT EXISTS "descuentos" ("dia"	TEXT NOT NULL, descuento INTEGER, PRIMARY KEY("dia"));')
+        conexion.close()
+    
+    def descuento(self,dias): # devuelve el descuento que le correspoonde a un dia ingresado por nombre ej (martes) ojo los acentos
+        conex = Conexion_cinemark()
+        res=conex.consultar(f'SELECT descuento FROM descuentos WHERE dia = "{dias}" ')
+        return res.fetchone()[0]
+        conex.close()
+
 #c=C_Funciones()
 #c.generar_funciones()
+#c=C_Descuentos()
+#print(c.descuento("martes"))
 
 
 

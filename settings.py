@@ -1,6 +1,8 @@
 import os
 import locale
 
+# Precio de la entrada sin descuento, esta aqui provisorio, habria que ponerlo en una base de datos ***
+PRECIO=100 
 # Letras
 MAINBAR =("Verdana", 24, 'bold')
 TITLE = ("Verdana", 16)
