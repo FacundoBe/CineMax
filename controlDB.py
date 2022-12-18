@@ -73,6 +73,12 @@ class C_Reservas():
         conexion.consultar(f' INSERT INTO reservas (iduser, idfuncion, butacas, estado) VALUES {iduser, idfuncion, butacas, estado}')
         conexion.close()
 
+    def vencida(self,idfuncion):
+        conex = Conexion_cinemark()
+        conex.consultar(f'UPDATE reservas SET estado = "vencida" WHERE idfuncion = {idfuncion}')
+        conex.close()
+
+
 
 
 class C_Salas():
@@ -179,6 +185,18 @@ class C_Funciones():
         res=conex.consultar(f'SELECT DISTINCT hora FROM "funciones" WHERE idsalas = {idsala} AND estado = "activa" ORDER BY dia ASC ')
         horas = res.fetchall()
         return dias,horas
+        conex.close()
+    
+    def vencida(self,idfuncion):
+        conex = Conexion_cinemark()
+        conex.consultar(f'UPDATE funciones SET estado = "vencida" WHERE idfuncion = {idfuncion}')
+        conex.close()
+
+    def func_activas(self): #devuelve una lista con todas las funciones que tienen estado = 'activa'
+        conex = Conexion_cinemark()
+        res=conex.consultar(f'SELECT  idfuncion, dia, hora FROM "funciones" WHERE estado = "activa" ')
+        func = res.fetchall()
+        return func
         conex.close()
 
 
