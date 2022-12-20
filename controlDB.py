@@ -1,11 +1,11 @@
 import sqlite3 as sql
 from datetime import datetime, timedelta
-import settings
+from settings import *
 
 class Conexion_cinemark():
 
     def __init__(self):#bd es el nombre de la base de datos
-        self.conexion = sql.connect('cinemark.db')
+        self.conexion = sql.connect(base_folder + '\\' + 'cinemark.db')
         self.cursor = self.conexion.cursor()
     
     def consultar(self, consulta):
@@ -47,15 +47,23 @@ class C_Usuarios():
         if nombre != None:
             return nombre[0]
         conexion.close()
-
+    
+    def tiene_descuento(self,id): # Devuelve Tel nombre que corresponde a una id en particular
+        conexion=Conexion_cinemark()
+        res=conexion.consultar(f"SELECT descuento FROM usuarios WHERE id = {id}")
+        descuento = res.fetchone() 
+        conexion.close()
+        return descuento[0]==1 #devuelve true si el valor es 1 y por ello tiene descuentos, en caso contrario no le corresponde
+        
     def validar(self,email,password):
         conexion=Conexion_cinemark()
         res=conexion.consultar(f"SELECT id, permisos, password FROM usuarios WHERE email = '{email}'")
         data=res.fetchone()
+        conexion.close()
         if data != None:            # Evita errores si el email no esta registrado.
             if data[2] == password:
                 return  data[0],data[1]     # si la contraseña es correcta devuelve el ID del usuario, y sus permisos si no devuelve None
-        conexion.close()
+        
 
 
 
@@ -100,22 +108,38 @@ class C_Salas():
     def datos_cartelera(self,): # Devuelve los datos necesarios para armar la cartelera
         conex = Conexion_cinemark()
         res=conex.consultar('SELECT idsalas, pelicula, archivo_imagen FROM "salas" ')
-        return res.fetchall()
+        val = res.fetchall()
         conex.close()
+        return val
 
     def datos_funciones(self): # Devuelve los datos necesarios para armar las funciones
         conex = Conexion_cinemark()
         res=conex.consultar('SELECT idsalas, pelicula, horarios, butacasmax FROM "salas" ')
-        return res.fetchall()
+        val=res.fetchall()
         conex.close()
-    
+        return val
+        
     def datos_completos(self,id): # Devuelve todos los datos de la sala
         conex = Conexion_cinemark()
-        res=conex.consultar(f'SELECT * FROM "salas" WHERE idsalas = {id}')
-        return res.fetchall()
+        res = conex.consultar(f'SELECT * FROM "salas" WHERE idsalas = {id}')
+        val = res.fetchall()
         conex.close()
+        return val
+        
+    def datos_salas(self): # Devuelve los datos necesarios para mostrar salas/pelicula para eliminar
+        conex = Conexion_cinemark()
+        res=conex.consultar('SELECT idsalas, pelicula FROM "salas" ')
+        val = res.fetchall()
+        conex.close()
+        return val
     
-
+    def no_existe(self,id): # Devuelve true si la sala ya existe
+        conex = Conexion_cinemark()
+        res=conex.consultar(f'SELECT idsalas FROM "salas" WHERE idsalas = {id}')
+        val=res.fetchone()
+        conex.close()
+        return val == None
+        
 
 
 
@@ -151,9 +175,9 @@ class C_Funciones():
         conex = Conexion_cinemark()
         res=conex.consultar(f'SELECT idfuncion FROM "funciones" WHERE hora = "{hora}" AND dia = "{dia}" AND idsalas = {idsala}  ')
         val = res.fetchone()
-        return val == None
         conex.close()
-    
+        return val == None
+        
     def encontrar_id(self, idsala, dia, hora): #duvuelve le id de una funcion segun el horario y la sala correspondientes
         conex = Conexion_cinemark()
         res=conex.consultar(f'SELECT idfuncion FROM "funciones" WHERE hora = "{hora}" AND dia = "{dia}" AND idsalas = {idsala}  ')
@@ -165,9 +189,10 @@ class C_Funciones():
     def butacas_libres(self, idfuncion): #devuelve los asientos libres para una funcion
         conex = Conexion_cinemark()
         res=conex.consultar(f'SELECT butacaslibres FROM "funciones" WHERE idfuncion = {idfuncion}  ')
-        return res.fetchone()[0]
+        val = res.fetchone()[0]
         conex.close()
-
+        return val
+        
     def reservar_asiento(self, idfuncion, butacas_res):
         conex = Conexion_cinemark()
         conex.consultar(f'UPDATE funciones SET butacaslibres = butacaslibres - {butacas_res} WHERE idfuncion = {idfuncion}')
@@ -184,8 +209,8 @@ class C_Funciones():
         dias = res.fetchall()
         res=conex.consultar(f'SELECT DISTINCT hora FROM "funciones" WHERE idsalas = {idsala} AND estado = "activa" ORDER BY dia ASC ')
         horas = res.fetchall()
-        return dias,horas
         conex.close()
+        return dias,horas
     
     def vencida(self,idfuncion):
         conex = Conexion_cinemark()
@@ -196,8 +221,15 @@ class C_Funciones():
         conex = Conexion_cinemark()
         res=conex.consultar(f'SELECT  idfuncion, dia, hora FROM "funciones" WHERE estado = "activa" ')
         func = res.fetchall()
-        return func
         conex.close()
+        return func
+        
+    def hay_activas(self, idsala): #devuelve TRUE si existen funciones activas para la sala solicitada
+        conex = Conexion_cinemark()
+        res=conex.consultar(f'SELECT idfuncion FROM "funciones" WHERE idsalas = {idsala} AND estado = "activa"')
+        val=res.fetchone()
+        conex.close()
+        return val !=None
 
 
 class C_Descuentos():
@@ -207,16 +239,14 @@ class C_Descuentos():
         conexion.consultar('CREATE TABLE IF NOT EXISTS "descuentos" ("dia"	TEXT NOT NULL, descuento INTEGER, PRIMARY KEY("dia"));')
         conexion.close()
     
-    def descuento(self,dias): # devuelve el descuento que le correspoonde a un dia ingresado por nombre ej (martes) ojo los acentos
+    def descuento(self,dias): # devuelve el descuento que le correspoonde a un dia ingresado por nombre ej. (martes) ojo los acentos
         conex = Conexion_cinemark()
         res=conex.consultar(f'SELECT descuento FROM descuentos WHERE dia = "{dias}" ')
-        return res.fetchone()[0]
+        val = res.fetchone()[0]
         conex.close()
+        return val
+        
 
-#c=C_Funciones()
-#c.generar_funciones()
-#c=C_Descuentos()
-#print(c.descuento("martes"))
 
 
 

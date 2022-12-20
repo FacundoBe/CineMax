@@ -29,7 +29,7 @@ class Cliente(tk.Tk):
         s.theme_use('clam')
         s.configure('TButton', relief='flat' ,font = TITLE, foreground="white", background=BUTTONCOL )
         s.map("TButton", foreground=[('pressed', 'white'), ('active', 'white')], background=[('pressed', BUTTONPRESS ),('disabled','grey' ), ('active', BUTTONHOV)])
-        s.configure('TLabel', relief='flat' , background=BACKGROUND )
+        s.configure('TLabel', relief='flat' , background=BACKGROUND,foreground=DARKCOLOR )
         s.configure('grey.TButton', relief='flat' ,font = TITLE, foreground=BACKGROUND, background=BUTTONCLEAR )
         s.configure('cancel.TButton', relief='flat' ,font = TITLE, foreground="white", background=REDBUTTON )
         s.configure('grey.TLabel', background=BACKGROUND, foreground=BUTTONPRESS)
@@ -37,11 +37,14 @@ class Cliente(tk.Tk):
         s.configure('TSpinbox', font = TITLE,  arrowsize=12 )
 
         # Faja superior
-        faja = tk.Frame(mainframe,bg=DARKCOLOR)
-        faja.grid(row=0,column=0, columnspan=2, sticky ="nsew")
-        faja.rowconfigure(0,weight=1)
-        faja.rowconfigure(1,weight=8)
-        tk.Label(faja, text=' CINEMARK', font = MAINBAR, bg=DARKCOLOR, fg='white' ).grid(row=1,column=1)
+        topframe = tk.Frame(mainframe, bg=DARKCOLOR, width=1200, height=80)
+        topframe.grid(row=0, sticky="ew")
+        topframe.grid_columnconfigure(0, weight=1)
+        topframe.grid_rowconfigure(0, weight=1)
+        topframe.grid_propagate(False)
+        encabezado_izq = tk.Label(topframe, text="CINEMARK", background=DARKCOLOR, fg="white", font=MAINBAR)
+        encabezado_izq.grid(row=0,padx=20, sticky=tk.W)
+
 
         # Cartelera
         cartframe=tk.Frame(mainframe,bg=BACKGROUND)
@@ -78,7 +81,6 @@ class Cliente(tk.Tk):
         ttk.Button(resframe, text="  VER RESERVAS  " , command=self.llama_gestion_reservas , style='flat.TButton',padding=35 ).grid(row=2,column=0,padx=30)
 
 
-
         self.mainloop()
     
     def llama_gestion_reservas(self):
@@ -95,6 +97,7 @@ class Label_con_retorno(tk.Label):
     def reservar_funcion(self,event):
         Hacer_Reserva(self.idsala,self.id_cliente)  # Abre el popup para hacer la reserva
 
-Cliente(4)
 
 
+
+Cliente(5)

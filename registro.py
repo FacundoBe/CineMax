@@ -25,11 +25,13 @@ class Registro(tk.Tk):
         mainframe.pack(side="left", expand=tk.YES, fill=tk.BOTH)  
 
         # Faja superior
-        faja = tk.Frame(mainframe,bg=DARKCOLOR)
-        faja.grid(row=0,column=0, columnspan=2, sticky ="nsew")
-        faja.rowconfigure(0,weight=1)
-        faja.rowconfigure(1,weight=8)
-        tk.Label(faja, text=' CINEMARK', font = MAINBAR, bg=DARKCOLOR, fg='white' ).grid(row=1,column=1)
+        topframe = tk.Frame(mainframe, bg=DARKCOLOR, width=1200, height=80)
+        topframe.grid(row=0, sticky="ew")
+        topframe.grid_columnconfigure(0, weight=1)
+        topframe.grid_rowconfigure(0, weight=1)
+        topframe.grid_propagate(False)
+        encabezado_izq = tk.Label(topframe, text="CINEMARK", background=DARKCOLOR, fg="white", font=MAINBAR)
+        encabezado_izq.grid(row=0,padx=20, sticky=tk.W)
 
         # Marco del Registro
         logframe=tk.Frame(mainframe,bg=BACKGROUND, width=200)

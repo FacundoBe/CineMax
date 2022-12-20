@@ -104,8 +104,12 @@ class Hacer_Reserva(tk.Toplevel):
     def comprar(self):
         hora=self.hora_reserva.get()
         dia_fun = self.dia_reserva.get()
-        desc_con=C_Descuentos()
-        descuento=desc_con.descuento(utl.nombre_dias(dia_fun))  # lee de la base de datos el descuento que toca al dia de la reserva
+        usr_con=C_Usuarios()
+        if usr_con.tiene_descuento(self.id_cliente): # Verifica si el cliente tiene tarjeta de descuento 
+            desc_con=C_Descuentos()
+            descuento=desc_con.descuento(utl.nombre_dias(dia_fun))  # lee de la base de datos el descuento que toca al dia de la reserva
+        else: 
+            descuento=0
         butacas=int(self.cant_butacas.get())
         fun=C_Funciones()
         funcion=fun.encontrar_id(self.sala[0],dia_fun, hora)
