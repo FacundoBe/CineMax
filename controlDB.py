@@ -86,18 +86,32 @@ class C_Reservas():
         conex.consultar(f'UPDATE reservas SET estado = "vencida" WHERE idfuncion = {idfuncion}')
         conex.close()
 
+    def reservas_activas_por_cliente(self,id_cliente): #devuelve datos de todas las reservas para un cliente 
+        conex = Conexion_cinemark()
+        res=conex.consultar(f'SELECT idreservas,idfuncion, butacas FROM "reservas" WHERE iduser = {id_cliente} AND estado = "activa" ')
+        val = res.fetchall()
+        conex.close()
+        return val
+    
+    def eliminar_reserva(self, id:int):
+        conex = Conexion_cinemark()
+        conex.consultar(f"DELETE FROM reservas WHERE idreservas = {id}")
+        conex.close()
+
+
+
 
 
 
 class C_Salas():
     def __init__(self):
         conex = Conexion_cinemark()
-        conex.consultar('CREATE TABLE IF NOT EXISTS "salas" ("idsalas"	INTEGER NOT NULL UNIQUE,"pelicula" TEXT NOT NULL,"sinopsis"	TEXT,"archivo_imagen" TEXT, "butacasmax"	INTEGER NOT NULL,"horarios"	TEXT NOT NULL,PRIMARY KEY("idsalas"));')
+        conex.consultar('CREATE TABLE IF NOT EXISTS "salas" ("idsalas"	INTEGER NOT NULL UNIQUE,"pelicula" TEXT NOT NULL,"sinopsis"	TEXT,"archivo_imagen" TEXT, "butacasmax"	INTEGER NOT NULL,"horarios"	TEXT NOT NULL, "fechalimite" TEXT NOT NULL, PRIMARY KEY("idsalas"));')
         conex.close()
 
-    def crear_sala(self, id:int, pelicula:str,horarios:str, archivo_img:str, butacasmax:int, sinopsis=""):
+    def crear_sala(self, id:int, pelicula:str,horarios:str, archivo_img:str, butacasmax:int,fechalimite,sinopsis=""):
         conex = Conexion_cinemark()
-        conex.consultar(f"INSERT INTO Salas (idsalas, pelicula, sinopsis, archivo_imagen, butacasmax, horarios) VALUES { id, pelicula, sinopsis, archivo_img, butacasmax, horarios}")
+        conex.consultar(f"INSERT INTO Salas (idsalas, pelicula, sinopsis, archivo_imagen, butacasmax, horarios, fechalimite) VALUES { id, pelicula, sinopsis, archivo_img, butacasmax, horarios, fechalimite}")
         conex.close()
     
     def eliminar_sala(self, id:int):
@@ -114,7 +128,7 @@ class C_Salas():
 
     def datos_funciones(self): # Devuelve los datos necesarios para armar las funciones
         conex = Conexion_cinemark()
-        res=conex.consultar('SELECT idsalas, pelicula, horarios, butacasmax FROM "salas" ')
+        res=conex.consultar('SELECT idsalas, pelicula, horarios, butacasmax, fechalimite FROM "salas" ')
         val=res.fetchall()
         conex.close()
         return val
@@ -122,9 +136,16 @@ class C_Salas():
     def datos_completos(self,id): # Devuelve todos los datos de la sala
         conex = Conexion_cinemark()
         res = conex.consultar(f'SELECT * FROM "salas" WHERE idsalas = {id}')
-        val = res.fetchall()
+        val = res.fetchone()
         conex.close()
         return val
+    
+    def butacasmax(self,id): # Devuelve el numero de butacas de la sala
+        conex = Conexion_cinemark()
+        res = conex.consultar(f'SELECT butacasmax FROM "salas" WHERE idsalas = {id}')
+        val = res.fetchone()
+        conex.close()
+        return val[0]
         
     def datos_salas(self): # Devuelve los datos necesarios para mostrar salas/pelicula para eliminar
         conex = Conexion_cinemark()
@@ -148,7 +169,7 @@ class C_Funciones():
     def __init__(self):
         conexion= Conexion_cinemark()
         conexion.consultar('CREATE TABLE IF NOT EXISTS "funciones" (	"idfuncion"	INTEGER NOT NULL UNIQUE, "idsalas"	INTEGER NOT NULL,'\
-                           +'"dia" TEXT NOT NULL, "hora" TEXT NOT NULL,	"butacaslibres"	INTEGER NOT NULL,estado TEXT NOT NULL, PRIMARY KEY("idfuncion" AUTOINCREMENT));')
+                           +'"dia" TEXT NOT NULL, "hora" TEXT NOT NULL,	"butacaslibres"	INTEGER NOT NULL,fechalimite TEXT,estado TEXT NOT NULL, PRIMARY KEY("idfuncion" AUTOINCREMENT));')
         conexion.close()
 
     def generar_funciones(self): # Genera las funciones de todas las salas atuales para los proximos 7 dias y la guarda en la base de datos
@@ -161,15 +182,17 @@ class C_Funciones():
         ahora= datetime.now()
         for sala in salas:
             idsala=sala[0]
-            butacasmax=sala[3]
+            fechalimite = datetime.strptime(sala[4], '%d/%m/%Y')
+            butacasmax = sala[3]
             for delta_dia in range(0,7):
                 dia_fun = ahora + timedelta(days=delta_dia) #Voy sumandole un dia mas a la fecha por ciclo
-                for hora,minutos in sala[2]:
-                    horario_funcion=datetime(dia_fun.year, dia_fun.month, dia_fun.day,int(hora),int(minutos))
-                    dia_str= horario_funcion.strftime('%d/%m/%Y' )
-                    hora_str= horario_funcion.strftime('%H:%M' )
-                    if self.no_existe(idsala,dia_str, hora_str):    # Solo inserta la funcion si la misma no existe previamente como activa
-                        self.crear_funcion(idsala, dia_str, hora_str,butacasmax)
+                if  fechalimite >= dia_fun: # verifica si la funcion esta dentro de la fecha limite (y si no no la crea)
+                    for hora,minutos in sala[2]:
+                        horario_funcion=datetime(dia_fun.year, dia_fun.month, dia_fun.day,int(hora),int(minutos))
+                        dia_str= horario_funcion.strftime('%d/%m/%Y' )
+                        hora_str= horario_funcion.strftime('%H:%M' )
+                        if self.no_existe(idsala,dia_str, hora_str):    # Solo inserta la funcion si la misma no existe previamente como activa
+                            self.crear_funcion(idsala, dia_str, hora_str,butacasmax)
     
     def no_existe(self, idsala, dia, hora):
         conex = Conexion_cinemark()
@@ -224,12 +247,26 @@ class C_Funciones():
         conex.close()
         return func
         
-    def hay_activas(self, idsala): #devuelve TRUE si existen funciones activas para la sala solicitada
+    def hay_vendidas(self, idsala): 
+        """devuelve TRUE si existen funciones activas con asientos vendidos para la sala solicitada"""
+        con_sal=C_Salas()
+        butacasmax=con_sal.butacasmax(idsala)
+        print(butacasmax)
         conex = Conexion_cinemark()
-        res=conex.consultar(f'SELECT idfuncion FROM "funciones" WHERE idsalas = {idsala} AND estado = "activa"')
+        res=conex.consultar(f'SELECT idfuncion FROM "funciones" WHERE idsalas = {idsala} AND estado = "activa" AND butacaslibres < "{butacasmax}" ')
         val=res.fetchone()
         conex.close()
         return val !=None
+
+    def datos_funcion(self,idfuncion):  
+       conex = Conexion_cinemark()
+       res=conex.consultar(f'SELECT  idsalas, dia, hora FROM "funciones" WHERE estado = "activa" AND idfuncion = {idfuncion} ')
+       func = res.fetchall()
+       if func != []:
+            func=list(func[0])
+       conex.close()
+       return func
+
 
 
 class C_Descuentos():

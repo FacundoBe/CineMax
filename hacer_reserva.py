@@ -3,8 +3,10 @@ from tkinter import ttk
 from tkinter import messagebox
 from settings import *
 from controlDB import *
+import updater
 import utils.generic as utl
 from datetime import datetime, timedelta
+
 
 
 class Hacer_Reserva(tk.Toplevel):
@@ -33,14 +35,19 @@ class Hacer_Reserva(tk.Toplevel):
 
         # Recupero todos los datos de la funciones disponibles para la sala desde funciones y armo listas con dias, nombre de dias y horarios
         fun=C_Funciones()
-        datos=fun.dia_y_hora(self.idsala)
+        
+        updater.actualizar_vencidas_BD() # Actualiza el estado de las fucniones que ya pasaron a vecinda
+        fun.generar_funciones() # Ejecuto el generador de funciones para que actualize la BD con las funciones de los prox 7 dias 
+        
+
+        datos=fun.dia_y_hora(self.idsala)    # (a meno que una sala y este fuera de fecha limite en cuyo caso no se crean funciones nuevas para esa sala)
         self.lista_dias_str=[x[0] for x in datos[0]]
         horarios=[x[0] for x in datos[1]]
         nombre_dias=[utl.nombre_dias(x) for x in self.lista_dias_str]
         print(horarios)
         # Recupero todos los datos sobre la sala de la pelicula elegida
         sal_DB=C_Salas()
-        sala=list(sal_DB.datos_completos(self.idsala)[0])
+        sala=list(sal_DB.datos_completos(self.idsala))
         self.sala=sala  # Guardo toda la informacion sobre la sala (pelicula sinpsis etc por si queremos agragae mas info en esta interfaz)
  
         
