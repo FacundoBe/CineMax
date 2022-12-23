@@ -127,10 +127,15 @@ class Cliente(tk.Tk):
         indice = index[0]
         self.actualizar_reservas()
         id = self.reservas[indice][0]
+        
         conex_res=C_Reservas()
-        print(id)
         conex_res.eliminar_reserva(id)   #elimina la reserva elegida de la Base de datos
-        self.lb_res.delete(indice) # Esto elimina la reserva de la ventana listbox, no de la base de datos    
+        butacas = self.reservas[indice][2] # butacas comprometidas en la reserva, hay que liberarls, incrementando butacalibres en tabla funciones
+        id_funcion=self.reservas[indice][1]
+        con_fun=C_Funciones()
+        con_fun.liberar_asiento(id_funcion, butacas)
+        self.lb_res.delete(indice) # Esto elimina la reserva de la ventana listbox, no de la base de datos
+
     
     def actualizar_reservas(self):
             con_res= C_Reservas()
@@ -168,7 +173,7 @@ class Label_con_retorno(tk.Label):
  
 
 
-
+Cliente(12)
 
 
 

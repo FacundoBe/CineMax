@@ -86,7 +86,8 @@ class C_Reservas():
         conex.consultar(f'UPDATE reservas SET estado = "vencida" WHERE idfuncion = {idfuncion}')
         conex.close()
 
-    def reservas_activas_por_cliente(self,id_cliente): #devuelve datos de todas las reservas para un cliente 
+    def reservas_activas_por_cliente(self,id_cliente): 
+        """ Devuelve ( idreservas, idfuncion, butacas ) de todas las reservas para un cliente  """
         conex = Conexion_cinemark()
         res=conex.consultar(f'SELECT idreservas,idfuncion, butacas FROM "reservas" WHERE iduser = {id_cliente} AND estado = "activa" ')
         val = res.fetchall()
@@ -169,7 +170,7 @@ class C_Funciones():
     def __init__(self):
         conexion= Conexion_cinemark()
         conexion.consultar('CREATE TABLE IF NOT EXISTS "funciones" (	"idfuncion"	INTEGER NOT NULL UNIQUE, "idsalas"	INTEGER NOT NULL,'\
-                           +'"dia" TEXT NOT NULL, "hora" TEXT NOT NULL,	"butacaslibres"	INTEGER NOT NULL,fechalimite TEXT,estado TEXT NOT NULL, PRIMARY KEY("idfuncion" AUTOINCREMENT));')
+                           +'"dia" TEXT NOT NULL, "hora" TEXT NOT NULL,	"butacaslibres"	INTEGER NOT NULL,estado TEXT NOT NULL, PRIMARY KEY("idfuncion" AUTOINCREMENT));')
         conexion.close()
 
     def generar_funciones(self): # Genera las funciones de todas las salas atuales para los proximos 7 dias y la guarda en la base de datos
@@ -221,6 +222,12 @@ class C_Funciones():
         conex.consultar(f'UPDATE funciones SET butacaslibres = butacaslibres - {butacas_res} WHERE idfuncion = {idfuncion}')
         conex.close()
     
+    def liberar_asiento(self, idfuncion, butacas_lib):
+        conex = Conexion_cinemark()
+        conex.consultar(f'UPDATE funciones SET butacaslibres = butacaslibres + {butacas_lib} WHERE idfuncion = {idfuncion}')
+        conex.close()
+    
+
     def crear_funcion(self, idsala,dia, hora, butacasmax):
         conex = Conexion_cinemark()
         conex.consultar(f'INSERT INTO funciones (idsalas, butacaslibres, dia, hora, estado) VALUES ({idsala}, {butacasmax}, "{dia}", "{hora}", "activa")')

@@ -316,7 +316,7 @@ class Admin(tk.Tk):
         id = self.lista_salas[indice][0]
         
         conex_funcion = C_Funciones()
-        if conex_funcion.hay_vendidas(id) != False: # toca == False culpa de hernan
+        if conex_funcion.hay_vendidas(id) == False: 
             self.lb_pelis.delete(indice) # Esto elimina la sala de la ventana listbox, no de la base de datos
             conex_salas = C_Salas()
             conex_salas.eliminar_sala(id)   #elimina la sala elegida de la Base de datos
