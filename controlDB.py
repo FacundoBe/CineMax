@@ -283,7 +283,8 @@ class C_Descuentos():
         conexion.consultar('CREATE TABLE IF NOT EXISTS "descuentos" ("dia"	TEXT NOT NULL, descuento INTEGER, PRIMARY KEY("dia"));')
         conexion.close()
     
-    def descuento(self,dias): # devuelve el descuento que le correspoonde a un dia ingresado por nombre ej. (martes) ojo los acentos
+    def descuento(self,dias): 
+        """ devuelve el descuento que le correspoonde a un dia ingresado por nombre ej. (martes) ojo los acentos """
         conex = Conexion_cinemark()
         res=conex.consultar(f'SELECT descuento FROM descuentos WHERE dia = "{dias}" ')
         val = res.fetchone()[0]
@@ -291,6 +292,16 @@ class C_Descuentos():
         return val
         
 
-
+class Consulta_Joined():
+    
+    def reservas_joined(self):
+        """ Devuelve la tabla de reservas completa con los datos de usuario, reserva y sala correspondientes"""
+        conex = Conexion_cinemark()
+        res=conex.consultar(f'SELECT u.nombre, u.apellido, u.email, r.idreservas, f.idfuncion, r.butacas, f.idsalas, f.dia,' \
+        +' f.hora, s.pelicula   FROM reservas r LEFT OUTER JOIN usuarios u ON u.id = r.iduser LEFT OUTER JOIN funciones f ' \
+        +'ON r.idfuncion = f.idfuncion LEFT OUTER JOIN salas s ON f.idsalas = s.idsalas WHERE r.estado ="activa"  ')
+        func = res.fetchall()
+        conex.close()
+        return func    
 
 

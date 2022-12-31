@@ -1,12 +1,11 @@
 import tkinter as tk
 from tkinter import ttk
-from settings import *
+from tkinter import messagebox, scrolledtext, filedialog
 import utils.generic as utl
-from tkinter import scrolledtext
-from tkinter import filedialog
+from settings import *
 from controlDB import *
-from tkinter import messagebox
 from admin_modificar_pel import AdminModSala
+from admin_ver_reservas import AdminVerReservas
 
 class Admin(tk.Tk):
     def __init__(self):
@@ -15,7 +14,7 @@ class Admin(tk.Tk):
         utl.centrar_ventana(self,1200,900)
         self.title('Panel principal Admin')
         self.resizable(0,0)
-        self.iconbitmap("img\\favicon.ico")
+        self.iconbitmap(image_path+"\\favicon.ico")
         
 
         #Estilo 
@@ -170,7 +169,6 @@ class Admin(tk.Tk):
         sala_string = []
         for sala in self.lista_salas:
             sala_string.append(f" Sala {sala[0]} : {sala[1]}")
-        #pelis_reemplazarbd = ("Sala 1 : Juego de Tronos","Sala 2 : Black Adam", "Sala 3 : Av reemplazar por base de datos
         
         list_peliculas = tk.Variable(value=sala_string)
         self.lb_pelis = tk.Listbox(frame_der, listvariable = list_peliculas,height=15, bd=0,font=STDFONT,)
@@ -248,7 +246,7 @@ class Admin(tk.Tk):
         
         btn_buscar_imgpel=ttk.Button(frame_inf_2, text="Guardar" , command=self.guardar_desc, style='flat.TButton').grid(row=5,column=7,padx=10,sticky='E',columnspan=1)
         
-        btn_reservas=ttk.Button(frame_inf, text="Ver Reservas" , command=self.guardar, style='flat.TButton',padding=20).grid(row=0,column=1, pady=(45,60),padx=(30,45),sticky='E')
+        btn_reservas=ttk.Button(frame_inf, text="Ver Reservas" , command=self.llama_ver_reserva, style='flat.TButton',padding=20).grid(row=0,column=1, pady=(45,60),padx=(30,45),sticky='E')
         
         self.mainloop()
 
@@ -269,6 +267,9 @@ class Admin(tk.Tk):
         self.butacas = self.butacasmax.get()
         self.sinopsis =  self.entry_sinopsis.get("1.0", "end-1c")
         self.titulo = self.titulo_entry.get()
+        if self.venc == "dd/mm/aaaa":
+            messagebox.showwarning(message="Debe ingresar una fecha de vencimiento", title="Error")
+            return
         if self.imgpel_entry != "":
             if self.titulo !="":
                 hor1 = self.horario_entry_1.get()
@@ -338,3 +339,9 @@ class Admin(tk.Tk):
 
     def llama_mod_sala(self):
         AdminModSala()
+
+    def llama_ver_reserva(self):
+        AdminVerReservas()
+
+
+Admin()

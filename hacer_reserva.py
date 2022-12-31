@@ -44,7 +44,6 @@ class Hacer_Reserva(tk.Toplevel):
         self.lista_dias_str=[x[0] for x in datos[0]]
         horarios=[x[0] for x in datos[1]]
         nombre_dias=[utl.nombre_dias(x) for x in self.lista_dias_str]
-        print(horarios)
         # Recupero todos los datos sobre la sala de la pelicula elegida
         sal_DB=C_Salas()
         sala=list(sal_DB.datos_completos(self.idsala))

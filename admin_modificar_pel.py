@@ -13,7 +13,7 @@ class AdminModSala(tk.Toplevel):
         utl.centrar_ventana(self,1200,900)
         self.title('Modificar Película / Sala')
         self.resizable(0,0)
-        self.iconbitmap("img\\favicon.ico")
+        self.iconbitmap(image_path+"\\favicon.ico")
         self.columnconfigure(0,weight=1)
         self.columnconfigure(1,weight=3)
         self.columnconfigure(2,weight=1)
