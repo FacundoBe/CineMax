@@ -260,6 +260,7 @@ class Admin(tk.Tk):
         
         list_peliculas = tk.Variable(value=sala_string)
         self.lb_pelis.config(listvariable=list_peliculas)
+
         
 
     def guardar(self):
@@ -338,7 +339,15 @@ class Admin(tk.Tk):
             self.entry_venc.config(fg = 'grey')
 
     def llama_mod_sala(self):
-        AdminModSala()
+        index = self.lb_pelis.curselection()
+        if not index: #si no hay sala selecionda sale sin hacer nada
+            return
+        indice = index[0]
+        id = self.lista_salas[indice][0] # este el indice de la sala seleccionada     
+        modRes=AdminModSala(id)
+        self.wait_window(modRes)
+        self.actualiza_salas()# actualiza la lista de salas con las sala modificada
+
 
     def llama_ver_reserva(self):
         AdminVerReservas()

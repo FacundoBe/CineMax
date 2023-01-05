@@ -114,7 +114,12 @@ class C_Salas():
         conex = Conexion_cinemark()
         conex.consultar(f"INSERT INTO Salas (idsalas, pelicula, sinopsis, archivo_imagen, butacasmax, horarios, fechalimite) VALUES { id, pelicula, sinopsis, archivo_img, butacasmax, horarios, fechalimite}")
         conex.close()
-    
+
+    def modificar_sala(self, id:int, pelicula:str,horarios:str, archivo_img:str, butacasmax:int,fechalimite,sinopsis=""):
+        conex = Conexion_cinemark()
+        conex.consultar(f"UPDATE Salas SET pelicula='{pelicula}', sinopsis='{sinopsis}', archivo_imagen='{archivo_img}', butacasmax='{butacasmax}', horarios='{horarios}', fechalimite='{fechalimite}' WHERE idsalas={id}")
+        conex.close()
+
     def eliminar_sala(self, id:int):
         conex = Conexion_cinemark()
         conex.consultar(f"DELETE FROM Salas WHERE idsalas = {id}")
@@ -134,7 +139,8 @@ class C_Salas():
         conex.close()
         return val
         
-    def datos_completos(self,id): # Devuelve todos los datos de la sala
+    def datos_completos(self,id): 
+        """ Devuelve todos los datos de la sala (idsalas, pelicula, sinopsis, archivo_imagen, butacasmax, horarios, fechalimite) """
         conex = Conexion_cinemark()
         res = conex.consultar(f'SELECT * FROM "salas" WHERE idsalas = {id}')
         val = res.fetchone()
