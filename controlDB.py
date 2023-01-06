@@ -296,6 +296,21 @@ class C_Descuentos():
         val = res.fetchone()[0]
         conex.close()
         return val
+
+    def actualizar_desc(self,lista_desc):
+        conex = Conexion_cinemark()
+        for i in range(7):
+            print(f'UPDATE descuentos SET descuento = {lista_desc[i][1]} WHERE dia ="{lista_desc[i][0]}" ')
+            conex.consultar(f'UPDATE descuentos SET descuento = {lista_desc[i][1]} WHERE dia ="{lista_desc[i][0]}" ')
+        conex.close()
+
+    def valor_descuentos(self):
+        """ devuelve los descuento de los 7 dias """
+        conex = Conexion_cinemark()
+        res=conex.consultar(f'SELECT * FROM descuentos ')
+        val = res.fetchall()
+        conex.close()
+        return val
         
 
 class Consulta_Joined():

@@ -200,50 +200,61 @@ class Admin(tk.Tk):
         label_descuentos = tk.Label(frame_inf_2, text="Descuentos", font=STDFONT)
         label_descuentos.grid(row=0,column=0, padx=20, sticky="w", pady=(10,0), columnspan=8)  
         
-        self.descuentos=""
+        #cargo los valores actuales de descuentod e la base de datos
+        con=C_Descuentos()
+        self.lista_desc=con.valor_descuentos()
+
+        self.lista_desc
         
         label_descuento_1 = tk.Label(frame_inf_2, text="Lunes", font=SMALLFONT, fg="#525252")
         label_descuento_1.grid(row=4,column=0, padx=20, sticky="N", pady=(5,3))
         self.descuento_entry_1 = tk.StringVar()
         entry_descuento_1 = tk.Entry(frame_inf_2, textvariable=self.descuento_entry_1, font=STDFONT,bd=0, width=4, justify="center")
         entry_descuento_1.grid(row=5, column=0,ipadx=10, ipady=5, sticky="WE", padx=(20,10))
+        entry_descuento_1.insert(0,self.lista_desc[0][1])
         
         label_descuento_2 = tk.Label(frame_inf_2, text="Martes", font=SMALLFONT, fg="#525252")
         label_descuento_2.grid(row=4,column=1, padx=20, sticky="N", pady=(5,3))
         self.descuento_entry_2 = tk.StringVar()
         entry_descuento_2 = tk.Entry(frame_inf_2, textvariable=self.descuento_entry_2, font=STDFONT,bd=0, width=4, justify="center")
         entry_descuento_2.grid(row=5, column=1,ipadx=10, ipady=5, sticky="WE",padx=10)
+        entry_descuento_2.insert(0,self.lista_desc[1][1])
         
         label_descuento_3 = tk.Label(frame_inf_2, text="Miercoles", font=SMALLFONT, fg="#525252")
         label_descuento_3.grid(row=4,column=2, padx=20, sticky="N", pady=(5,3))
         self.descuento_entry_3 = tk.StringVar()
         entry_descuento_3 = tk.Entry(frame_inf_2, textvariable=self.descuento_entry_3, font=STDFONT,bd=0, width=4, justify="center")
         entry_descuento_3.grid(row=5, column=2,ipadx=10, ipady=5, sticky="WE",padx=10)
-        
+        entry_descuento_3.insert(0,self.lista_desc[2][1])
+
         label_descuento_4 = tk.Label(frame_inf_2, text="Jueves", font=SMALLFONT, fg="#525252")
         label_descuento_4.grid(row=4,column=3, padx=20, sticky="N", pady=(5,3))
         self.descuento_entry_4 = tk.StringVar()
         entry_descuento_4 = tk.Entry(frame_inf_2, textvariable=self.descuento_entry_4, font=STDFONT,bd=0, width=4, justify="center")
         entry_descuento_4.grid(row=5, column=3,ipadx=10, ipady=5, sticky="WE",padx=10)
-        
+        entry_descuento_4.insert(0,self.lista_desc[3][1])
+
         label_descuento_5 = tk.Label(frame_inf_2, text="Viernes", font=SMALLFONT, fg="#525252")
         label_descuento_5.grid(row=4,column=4, padx=20, sticky="N", pady=(5,3))
         self.descuento_entry_5 = tk.StringVar()
         entry_descuento_5 = tk.Entry(frame_inf_2, textvariable=self.descuento_entry_5, font=STDFONT,bd=0, width=4, justify="center")
         entry_descuento_5.grid(row=5, column=4,ipadx=10, ipady=5, sticky="WE",padx=10)
-        
+        entry_descuento_5.insert(0,self.lista_desc[4][1])
+
         label_descuento_6 = tk.Label(frame_inf_2, text="Sabado", font=SMALLFONT, fg="#525252")
         label_descuento_6.grid(row=4,column=5, padx=20, sticky="N", pady=(5,3))
         self.descuento_entry_6 = tk.StringVar()
         entry_descuento_6 = tk.Entry(frame_inf_2, textvariable=self.descuento_entry_6, font=STDFONT,bd=0, width=4, justify="center")
         entry_descuento_6.grid(row=5, column=5,ipadx=10, ipady=5, sticky="WE",padx=10)
-        
+        entry_descuento_6.insert(0,self.lista_desc[5][1])
+
         label_descuento_7 = tk.Label(frame_inf_2, text="Domingo", font=SMALLFONT, fg="#525252")
         label_descuento_7.grid(row=4,column=6, padx=20, sticky="N", pady=(5,3))
         self.descuento_entry_7 = tk.StringVar()
-        entry_descuento_7 = tk.Entry(frame_inf_2, textvariable=self.descuento_entry_5, font=STDFONT,bd=0, width=4, justify="center")
+        entry_descuento_7 = tk.Entry(frame_inf_2, textvariable=self.descuento_entry_7, font=STDFONT,bd=0, width=4, justify="center")
         entry_descuento_7.grid(row=5, column=6,ipadx=10, ipady=5, sticky="WE",padx=10)
-        
+        entry_descuento_7.insert(0,self.lista_desc[6][1])
+
         btn_buscar_imgpel=ttk.Button(frame_inf_2, text="Guardar" , command=self.guardar_desc, style='flat.TButton').grid(row=5,column=7,padx=10,sticky='E',columnspan=1)
         
         btn_reservas=ttk.Button(frame_inf, text="Ver Reservas" , command=self.llama_ver_reserva, style='flat.TButton',padding=20).grid(row=0,column=1, pady=(45,60),padx=(30,45),sticky='E')
@@ -261,7 +272,15 @@ class Admin(tk.Tk):
         list_peliculas = tk.Variable(value=sala_string)
         self.lb_pelis.config(listvariable=list_peliculas)
 
-        
+    def guardar_desc(self):
+        lista_desc=[]
+        for i in range(7):
+            desc=eval(f"self.descuento_entry_{i+1}.get()") 
+            desc = 0 if desc=="" else desc # si esta vacio considera el descuento igual a 0
+            lista_desc.append([self.lista_desc[i][0], desc]) #armo una lsita con los dias y los valores de descuento actualizados
+        con=C_Descuentos()
+        con.actualizar_desc(lista_desc)
+
 
     def guardar(self):
         self.venc=self.venc_sala.get()
@@ -307,8 +326,6 @@ class Admin(tk.Tk):
         self.imgpel_entry = filename
         self.entry_img.insert(tk.END, filename)
 
-    def guardar_desc(self):
-        pass
 
     def eliminar_sala(self):
         index = self.lb_pelis.curselection()
