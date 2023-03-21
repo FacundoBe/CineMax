@@ -142,6 +142,6 @@ class Login(tk.Tk):
         
  
 
-        
-Login()
+if __name__ == '__main__':   
+    Login()
 

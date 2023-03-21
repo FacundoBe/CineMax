@@ -173,7 +173,7 @@ class Label_con_retorno(tk.Label):
  
 
 
-Cliente(5)
+
 
 
 

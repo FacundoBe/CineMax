@@ -370,4 +370,3 @@ class Admin(tk.Tk):
         AdminVerReservas()
 
 
-Admin()

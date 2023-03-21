@@ -33,14 +33,16 @@ class C_Usuarios():
         conexion.consultar(f' INSERT INTO usuarios (nombre, apellido, email, password,permisos, telefono, descuento) VALUES {nombre,apellido, email, password, permisos, telefono, 0} ')
         conexion.close
 
-    def esusuario(self,email): # Devuelve True si el email existe en la tabla usuarios
+    def esusuario(self,email):
+        """ Devuelve True si el email existe en la tabla usuarios"""
         conexion=Conexion_cinemark()
         res=conexion.consultar(f"SELECT email FROM usuarios WHERE email = '{email}'")
         val=res.fetchone()
         conexion.close()
         return val != None
  
-    def nombre(self,id): # Devuelve Tel nombre que corresponde a una id en particular
+    def nombre(self,id): 
+        """ Devuelve Tel nombre que corresponde a una id en particular """
         conexion=Conexion_cinemark()
         res=conexion.consultar(f"SELECT nombre FROM usuarios WHERE id = {id}")
         nombre= res.fetchone() 
@@ -48,7 +50,8 @@ class C_Usuarios():
             return nombre[0]
         conexion.close()
     
-    def tiene_descuento(self,id): # Devuelve Tel nombre que corresponde a una id en particular
+    def tiene_descuento(self,id): 
+        """ Devuelve Tel nombre que corresponde a una id en particular """
         conexion=Conexion_cinemark()
         res=conexion.consultar(f"SELECT descuento FROM usuarios WHERE id = {id}")
         descuento = res.fetchone() 
@@ -132,7 +135,8 @@ class C_Salas():
         conex.close()
         return val
 
-    def datos_funciones(self): # Devuelve los datos necesarios para armar las funciones
+    def datos_funciones(self): 
+        """ Devuelve los datos necesarios para armar las funciones """
         conex = Conexion_cinemark()
         res=conex.consultar('SELECT idsalas, pelicula, horarios, butacasmax, fechalimite FROM "salas" ')
         val=res.fetchall()
@@ -147,21 +151,24 @@ class C_Salas():
         conex.close()
         return val
     
-    def butacasmax(self,id): # Devuelve el numero de butacas de la sala
+    def butacasmax(self,id):
+        """ Devuelve el numero de butacas de la sala """
         conex = Conexion_cinemark()
         res = conex.consultar(f'SELECT butacasmax FROM "salas" WHERE idsalas = {id}')
         val = res.fetchone()
         conex.close()
         return val[0]
         
-    def datos_salas(self): # Devuelve los datos necesarios para mostrar salas/pelicula para eliminar
+    def datos_salas(self): 
+        """ Devuelve los datos necesarios para mostrar salas/pelicula para eliminar """
         conex = Conexion_cinemark()
         res=conex.consultar('SELECT idsalas, pelicula FROM "salas" ')
         val = res.fetchall()
         conex.close()
         return val
     
-    def no_existe(self,id): # Devuelve true si la sala ya existe
+    def no_existe(self,id): 
+        """ Devuelve true si la sala ya existe """
         conex = Conexion_cinemark()
         res=conex.consultar(f'SELECT idsalas FROM "salas" WHERE idsalas = {id}')
         val=res.fetchone()
@@ -208,7 +215,8 @@ class C_Funciones():
         conex.close()
         return val == None
         
-    def encontrar_id(self, idsala, dia, hora): #duvuelve le id de una funcion segun el horario y la sala correspondientes
+    def encontrar_id(self, idsala, dia, hora): 
+        """ devuelve le id de una funcion segun el horario y la sala correspondientes """
         conex = Conexion_cinemark()
         res=conex.consultar(f'SELECT idfuncion FROM "funciones" WHERE hora = "{hora}" AND dia = "{dia}" AND idsalas = {idsala}  ')
         val = res.fetchone()
@@ -216,7 +224,8 @@ class C_Funciones():
             return val[0]
         conex.close()
     
-    def butacas_libres(self, idfuncion): #devuelve los asientos libres para una funcion
+    def butacas_libres(self, idfuncion): 
+        """ #devuelve los asientos libres para una funcion """
         conex = Conexion_cinemark()
         res=conex.consultar(f'SELECT butacaslibres FROM "funciones" WHERE idfuncion = {idfuncion}  ')
         val = res.fetchone()[0]
@@ -239,7 +248,8 @@ class C_Funciones():
         conex.consultar(f'INSERT INTO funciones (idsalas, butacaslibres, dia, hora, estado) VALUES ({idsala}, {butacasmax}, "{dia}", "{hora}", "activa")')
         conex.close()
       
-    def dia_y_hora(self, idsala): #devuelve una lista con los dias y las horas una pelicula considerando solo funcines activas
+    def dia_y_hora(self, idsala): 
+        """ devuelve una lista con los dias y las horas una pelicula considerando solo funcines activas """
         conex = Conexion_cinemark()
         res=conex.consultar(f'SELECT DISTINCT dia FROM "funciones" WHERE idsalas = {idsala} AND estado = "activa" ORDER BY dia ASC ')
         dias = res.fetchall()
@@ -253,7 +263,8 @@ class C_Funciones():
         conex.consultar(f'UPDATE funciones SET estado = "vencida" WHERE idfuncion = {idfuncion}')
         conex.close()
 
-    def func_activas(self): #devuelve una lista con todas las funciones que tienen estado = 'activa'
+    def func_activas(self): 
+        """#devuelve una lista con todas las funciones que tienen estado = 'activa' """
         conex = Conexion_cinemark()
         res=conex.consultar(f'SELECT  idfuncion, dia, hora FROM "funciones" WHERE estado = "activa" ')
         func = res.fetchall()
